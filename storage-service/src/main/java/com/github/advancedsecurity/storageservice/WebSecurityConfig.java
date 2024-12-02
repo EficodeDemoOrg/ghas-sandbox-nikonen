@@ -54,6 +54,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		  auth.authenticationProvider(jwtAuthenticatinProvider);
   	}
+
+	protected void foobar(HttpSecurity http) throws Exception {
+	BearerAuthenticationFilter filter = new BearerAuthenticationFilter(authenticationManager(), this.antPattern);
+	filter.setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler);
+	http.cors().and()
+		 .csrf().disable()
+		 .authorizeRequests().antMatchers(this.antPattern).authenticated().and()
+		 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+		 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	}
 	
 	@Bean 
 	public CorsConfigurationSource corsConfigurationSource() {
